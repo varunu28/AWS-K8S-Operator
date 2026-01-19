@@ -51,7 +51,10 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	l := log.FromContext(ctx)
 
 	ec2Instance := &computev1.EC2Instance{}
-	r.Get(ctx, req.NamespacedName, ec2Instance)
+	if err := r.Get(ctx, req.NamespacedName, ec2Instance); err != nil {
+		l.Error(err, "Failed to get EC2Instance")
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
 
 	fmt.Println("Got a request for ec2 instance in namespace", ec2Instance)
 	l.Info("Reconciled EC2Instance", "Name", ec2Instance.Name)
