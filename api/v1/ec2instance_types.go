@@ -27,10 +27,19 @@ type EC2InstanceSpec struct {
 	// The following markers will use OpenAPI v3 schema to validate the value
 	// More info: https://book.kubebuilder.io/reference/markers/crd-validation.html
 
-	AmiID        string `json:"amiId,omitempty"`
-	SshKey       string `json:"sshKey,omitempty"`
-	InstanceType string `json:"instanceType,omitempty"`
-	Subnet       string `json:"subnet,omitempty"`
+	AmiID             string            `json:"amiId"`
+	SshKey            string            `json:"sshKey"`
+	InstanceType      string            `json:"instanceType"`
+	Subnet            string            `json:"subnet"`
+	Tags              map[string]string `json:"tags,omitempty"`
+	Storage           StorageConfig     `json:"storage"`
+	AdditionalStorage []StorageConfig   `json:"additionalStorage,omitempty"`
+	InstanceName      string            `json:"instanceName"`
+}
+
+type StorageConfig struct {
+	Size int    `json:"size"`
+	Type string `json:"type"`
 }
 
 // EC2InstanceStatus defines the observed state of EC2Instance.
@@ -38,8 +47,8 @@ type EC2InstanceStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 	Phase      string `json:"phase,omitempty"`
-	InstanceId string `json:"instanceId,omitempty"`
-	PublicIp   string `json:"publicIp,omitempty"`
+	InstanceID string `json:"instanceID,omitempty"`
+	PublicIP   string `json:"publicIP,omitempty"`
 }
 
 // +kubebuilder:object:root=true

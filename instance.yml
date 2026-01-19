@@ -1,0 +1,19 @@
+apiVersion: compute.cloud.com/v1
+kind: EC2Instance
+metadata:
+  name: example-ec2instance
+spec:
+  amiId: ami-0c55b159cbfafe1f0
+  sshKey: my-ssh-key
+  instanceType: t2.micro
+  subnet: subnet-12345678
+  instanceName: my-ec2-instance
+  storage:
+    size: 20
+    type: gp3
+  additionalStorage:
+    - size: 50
+      type: gp3
+  tags:
+    environment: "dev"
+    owner: "varunu28"

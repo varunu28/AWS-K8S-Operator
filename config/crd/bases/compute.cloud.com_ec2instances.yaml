@@ -39,26 +39,61 @@ spec:
           spec:
             description: spec defines the desired state of EC2Instance
             properties:
+              additionalStorage:
+                items:
+                  properties:
+                    size:
+                      type: integer
+                    type:
+                      type: string
+                  required:
+                  - size
+                  - type
+                  type: object
+                type: array
               amiId:
+                type: string
+              instanceName:
                 type: string
               instanceType:
                 type: string
               sshKey:
                 type: string
+              storage:
+                properties:
+                  size:
+                    type: integer
+                  type:
+                    type: string
+                required:
+                - size
+                - type
+                type: object
               subnet:
                 type: string
+              tags:
+                additionalProperties:
+                  type: string
+                type: object
+            required:
+            - amiId
+            - instanceName
+            - instanceType
+            - sshKey
+            - storage
+            - subnet
             type: object
           status:
             description: status defines the observed state of EC2Instance
             properties:
-              instanceId:
+              instanceID:
                 type: string
               phase:
                 description: |-
                   INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
                   Important: Run "make" to regenerate code after modifying this file
                 type: string
-              publicIp:
+              publicIP:
                 type: string
             type: object
         required:
