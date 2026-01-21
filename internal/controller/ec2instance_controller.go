@@ -104,7 +104,7 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	}
 
 	if ec2Instance.Status.InstanceID != "" {
-		l.Info("EC2 instance already exists in Kubernetes. Checking if its still running", "instanceID", ec2Instance.Status.InstanceID)
+		l.Info("EC2 instance already exists in Kubernetes.", "instanceID", ec2Instance.Status.InstanceID)
 		// TODO: Add logic to check if the EC2 instance is still running to detect drift detection
 		return ctrl.Result{}, nil
 	}
@@ -121,7 +121,7 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	l.Info("=== CONTINUE WITH EC2 INSTANCE CREATION ===")
 	createdInstanceInfo, err := r.createEc2Instance(ec2Instance)
 	if err != nil {
-		l.Error(err, "Failed to EC2 instance")
+		l.Error(err, "Failed to create EC2 instance")
 		return ctrl.Result{}, err
 	}
 	l.Info("=== UPDATING STATUS ===", "instanceId", createdInstanceInfo.InstanceID, "state", createdInstanceInfo.State)

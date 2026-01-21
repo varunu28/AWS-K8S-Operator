@@ -14,6 +14,11 @@ func (r *EC2InstanceReconciler) deleteEc2Instance(ctx context.Context, ec2Instan
 
 	l.Info("Deleting EC2 instance", "instanceID", ec2Instance.Status.InstanceID)
 
+	if ec2Instance.Status.InstanceID == "" {
+		l.Info("EC2 instance ID is empty. Nothing to delete.")
+		return false, nil
+	}
+
 	ec2Client := r.getEC2Client(ec2Instance.Spec.Region)
 
 	terminateResult, err := ec2Client.TerminateInstances(ctx, &ec2.TerminateInstancesInput{

@@ -81,7 +81,7 @@ type EC2Instance struct {
 
 	// status defines the observed state of EC2Instance
 	// +optional
-	Status EC2InstanceStatus `json:"status,omitempty"`
+	Status EC2InstanceStatus `json:"status"`
 }
 
 // +kubebuilder:object:root=true
@@ -89,17 +89,17 @@ type EC2Instance struct {
 // EC2InstanceList contains a list of EC2Instance
 type EC2InstanceList struct {
 	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitzero"`
+	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []EC2Instance `json:"items"`
 }
 
 type CreatedInstanceInfo struct {
 	InstanceID string `json:"instanceID"`
-	State      string `json:"state,omitempty"`
-	PublicIP   string `json:"publicIP,omitempty"`
-	PrivateIP  string `json:"privateIP,omitempty"`
-	PublicDNS  string `json:"publicDNS,omitempty"`
-	PrivateDNS string `json:"privateDNS,omitempty"`
+	State      string `json:"state"`
+	PublicIP   string `json:"publicIP"`
+	PrivateIP  string `json:"privateIP"`
+	PublicDNS  string `json:"publicDNS"`
+	PrivateDNS string `json:"privateDNS"`
 }
 
 func init() {
