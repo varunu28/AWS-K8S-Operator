@@ -32,7 +32,34 @@ import (
 // EC2InstanceReconciler reconciles a EC2Instance object
 type EC2InstanceReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	Scheme        *runtime.Scheme
+	EC2ClientFunc func(region string) EC2API
+	ec2Clients    map[string]EC2API
+}
+
+// getEC2Client returns a cached EC2 client for the specified region
+func (r *EC2InstanceReconciler) getEC2Client(region string) EC2API {
+	// Initialize the cache map if needed
+	if r.ec2Clients == nil {
+		r.ec2Clients = make(map[string]EC2API)
+	}
+
+	// Return cached client if it exists
+	if client, exists := r.ec2Clients[region]; exists {
+		return client
+	}
+
+	// Create new client
+	var client EC2API
+	if r.EC2ClientFunc != nil {
+		client = r.EC2ClientFunc(region)
+	} else {
+		client = awsClient(region)
+	}
+
+	// Cache and return
+	r.ec2Clients[region] = client
+	return client
 }
 
 // +kubebuilder:rbac:groups=compute.cloud.com,resources=ec2instances,verbs=get;list;watch;create;update;patch;delete
@@ -61,7 +88,7 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	// check for deletion of ec2 instance
 	if !ec2Instance.DeletionTimestamp.IsZero() {
 		l.Info("Has deletion timestamp. Instance is being deleted")
-		_, err := deleteEc2Instance(ctx, ec2Instance)
+		_, err := r.deleteEc2Instance(ctx, ec2Instance)
 		if err != nil {
 			l.Error(err, "Failed to delete EC2Instance")
 			return ctrl.Result{Requeue: true}, err
@@ -92,7 +119,7 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	l.Info("=== FINALIZERS ADDED ===")
 
 	l.Info("=== CONTINUE WITH EC2 INSTANCE CREATION ===")
-	createdInstanceInfo, err := createEc2Instance(ec2Instance)
+	createdInstanceInfo, err := r.createEc2Instance(ec2Instance)
 	if err != nil {
 		l.Error(err, "Failed to EC2 instance")
 		return ctrl.Result{}, err

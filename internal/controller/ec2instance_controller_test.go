@@ -71,14 +71,22 @@ var _ = Describe("EC2Instance Controller", func() {
 			controllerReconciler := &EC2InstanceReconciler{
 				Client: k8sClient,
 				Scheme: k8sClient.Scheme(),
+				EC2ClientFunc: func(region string) EC2API {
+					return &MockEC2Client{}
+				},
 			}
 
 			_, err := controllerReconciler.Reconcile(ctx, reconcile.Request{
 				NamespacedName: typeNamespacedName,
 			})
 			Expect(err).NotTo(HaveOccurred())
-			// TODO(user): Add more specific assertions depending on your controller's reconciliation logic.
-			// Example: If you expect a certain status condition after reconciliation, verify it here.
+
+			// Verify the status was updated
+			updatedInstance := &computev1.EC2Instance{}
+			err = k8sClient.Get(ctx, typeNamespacedName, updatedInstance)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(updatedInstance.Status.InstanceID).To(Equal("i-mock123456"))
+			Expect(updatedInstance.Status.State).To(Equal("running"))
 		})
 	})
 })

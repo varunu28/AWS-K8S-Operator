@@ -9,12 +9,12 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
-func deleteEc2Instance(ctx context.Context, ec2Instance *computev1.EC2Instance) (bool, error) {
+func (r *EC2InstanceReconciler) deleteEc2Instance(ctx context.Context, ec2Instance *computev1.EC2Instance) (bool, error) {
 	l := log.FromContext(ctx)
 
 	l.Info("Deleting EC2 instance", "instanceID", ec2Instance.Status.InstanceID)
 
-	ec2Client := awsClient(ec2Instance.Spec.Region)
+	ec2Client := r.getEC2Client(ec2Instance.Spec.Region)
 
 	terminateResult, err := ec2Client.TerminateInstances(ctx, &ec2.TerminateInstancesInput{
 		InstanceIds: []string{ec2Instance.Status.InstanceID},

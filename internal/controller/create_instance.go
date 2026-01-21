@@ -12,7 +12,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
-func createEc2Instance(ec2Instance *computev1.EC2Instance) (createdInstanceInfo *computev1.CreatedInstanceInfo, err error) {
+func (r *EC2InstanceReconciler) createEc2Instance(ec2Instance *computev1.EC2Instance) (createdInstanceInfo *computev1.CreatedInstanceInfo, err error) {
 	l := log.Log.WithName("createEc2Instance")
 
 	l.Info("=== STARTING EC2 INSTANCE CREATION ===",
@@ -20,8 +20,7 @@ func createEc2Instance(ec2Instance *computev1.EC2Instance) (createdInstanceInfo 
 		"instanceType", ec2Instance.Spec.InstanceType,
 		"region", ec2Instance.Spec.Region)
 
-	// ec2 client for creation of EC2 instance
-	ec2Client := awsClient(ec2Instance.Spec.Region)
+	ec2Client := r.getEC2Client(ec2Instance.Spec.Region)
 
 	runInput := &ec2.RunInstancesInput{
 		ImageId:      aws.String(ec2Instance.Spec.AmiID),
