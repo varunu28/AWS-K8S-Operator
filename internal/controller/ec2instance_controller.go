@@ -45,21 +45,21 @@ func (r *EC2InstanceReconciler) getEC2Client(region string) EC2API {
 	}
 
 	// Return cached client if it exists
-	if client, exists := r.ec2Clients[region]; exists {
-		return client
+	if ec2Client, exists := r.ec2Clients[region]; exists {
+		return ec2Client
 	}
 
 	// Create new client
-	var client EC2API
+	var ec2Client EC2API
 	if r.EC2ClientFunc != nil {
-		client = r.EC2ClientFunc(region)
+		ec2Client = r.EC2ClientFunc(region)
 	} else {
-		client = awsClient(region)
+		ec2Client = awsClient(region)
 	}
 
 	// Cache and return
-	r.ec2Clients[region] = client
-	return client
+	r.ec2Clients[region] = ec2Client
+	return ec2Client
 }
 
 // +kubebuilder:rbac:groups=compute.cloud.com,resources=ec2instances,verbs=get;list;watch;create;update;patch;delete
