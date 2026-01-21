@@ -1,19 +1,32 @@
 apiVersion: compute.cloud.com/v1
 kind: EC2Instance
 metadata:
-  name: example-ec2instance
+  name: web-server-1
+  namespace: default
 spec:
-  amiId: ami-0c55b159cbfafe1f0
-  sshKey: my-ssh-key
-  instanceType: t2.micro
-  subnet: subnet-12345678
-  instanceName: my-ec2-instance
+  instanceType: t3.micro
+  amiId: ami-0230bd60aa48260c6
+  region: us-east-1
+  availabilityZone: us-east-1a
+  keyPair: my-key-pair
+  securityGroups:
+    - sg-0123456789abcdef0
+  subnet: subnet-0a1b2c3d4e5f67890
+  associatePublicIP: true
   storage:
-    size: 20
-    type: gp3
-  additionalStorage:
-    - size: 50
+    rootVolume:
+      size: 20
       type: gp3
+      encrypted: false
+    additionalVolumes:
+      - size: 50
+        type: gp3
+        deviceName: /dev/sdf
+        encrypted: false
   tags:
-    environment: "dev"
-    owner: "varunu28"
+    Environment: production
+    Owner: platform-team
+    Name: k8s-managed-web-server
+  userData: |
+    #!/bin/bash
+    echo "Hello World" > /tmp/hello.txt

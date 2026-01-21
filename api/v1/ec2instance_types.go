@@ -27,28 +27,41 @@ type EC2InstanceSpec struct {
 	// The following markers will use OpenAPI v3 schema to validate the value
 	// More info: https://book.kubebuilder.io/reference/markers/crd-validation.html
 
-	AmiID             string            `json:"amiId"`
-	SshKey            string            `json:"sshKey"`
 	InstanceType      string            `json:"instanceType"`
-	Subnet            string            `json:"subnet"`
+	AmiID             string            `json:"amiId"`
+	Region            string            `json:"region"`
+	AvailabilityZone  string            `json:"availabilityZone,omitempty"`
+	KeyPair           string            `json:"keyPair,omitempty"`
+	SecurityGroups    []string          `json:"securityGroups,omitempty"`
+	Subnet            string            `json:"subnet,omitempty"`
+	UserData          string            `json:"userData,omitempty"`
 	Tags              map[string]string `json:"tags,omitempty"`
 	Storage           StorageConfig     `json:"storage"`
-	AdditionalStorage []StorageConfig   `json:"additionalStorage,omitempty"`
-	InstanceName      string            `json:"instanceName"`
+	AssociatePublicIP bool              `json:"associatePublicIP,omitempty"`
 }
 
 type StorageConfig struct {
-	Size int    `json:"size"`
-	Type string `json:"type"`
+	RootVolume        VolumeConfig   `json:"rootVolume,omitempty"`
+	AdditionalVolumes []VolumeConfig `json:"additionalVolumes,omitempty"`
+}
+
+type VolumeConfig struct {
+	Size       int32  `json:"size"`
+	Type       string `json:"type,omitempty"`
+	DeviceName string `json:"deviceName,omitempty"`
+	Encrypted  bool   `json:"encrypted,omitempty"`
 }
 
 // EC2InstanceStatus defines the observed state of EC2Instance.
 type EC2InstanceStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-	Phase      string `json:"phase,omitempty"`
+	State      string `json:"state,omitempty"`
 	InstanceID string `json:"instanceID,omitempty"`
 	PublicIP   string `json:"publicIP,omitempty"`
+	PrivateIP  string `json:"privateIP,omitempty"`
+	PublicDNS  string `json:"publicDNS,omitempty"`
+	PrivateDNS string `json:"privateDNS,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -63,12 +76,12 @@ type EC2Instance struct {
 	metav1.ObjectMeta `json:"metadata,omitzero"`
 
 	// spec defines the desired state of EC2Instance
-	// +required
-	Spec EC2InstanceSpec `json:"spec"`
+	// +optional
+	Spec EC2InstanceSpec `json:"spec,omitempty"`
 
 	// status defines the observed state of EC2Instance
 	// +optional
-	Status EC2InstanceStatus `json:"status,omitzero"`
+	Status EC2InstanceStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -78,6 +91,15 @@ type EC2InstanceList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitzero"`
 	Items           []EC2Instance `json:"items"`
+}
+
+type CreatedInstanceInfo struct {
+	InstanceID string `json:"instanceID"`
+	State      string `json:"state,omitempty"`
+	PublicIP   string `json:"publicIP,omitempty"`
+	PrivateIP  string `json:"privateIP,omitempty"`
+	PublicDNS  string `json:"publicDNS,omitempty"`
+	PrivateDNS string `json:"privateDNS,omitempty"`
 }
 
 func init() {

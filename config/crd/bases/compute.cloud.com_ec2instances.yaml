@@ -39,35 +39,54 @@ spec:
           spec:
             description: spec defines the desired state of EC2Instance
             properties:
-              additionalStorage:
-                items:
-                  properties:
-                    size:
-                      type: integer
-                    type:
-                      type: string
-                  required:
-                  - size
-                  - type
-                  type: object
-                type: array
               amiId:
                 type: string
-              instanceName:
+              associatePublicIP:
+                type: boolean
+              availabilityZone:
                 type: string
               instanceType:
                 type: string
-              sshKey:
+              keyPair:
                 type: string
+              region:
+                type: string
+              securityGroups:
+                items:
+                  type: string
+                type: array
               storage:
                 properties:
-                  size:
-                    type: integer
-                  type:
-                    type: string
-                required:
-                - size
-                - type
+                  additionalVolumes:
+                    items:
+                      properties:
+                        deviceName:
+                          type: string
+                        encrypted:
+                          type: boolean
+                        size:
+                          format: int32
+                          type: integer
+                        type:
+                          type: string
+                      required:
+                      - size
+                      type: object
+                    type: array
+                  rootVolume:
+                    properties:
+                      deviceName:
+                        type: string
+                      encrypted:
+                        type: boolean
+                      size:
+                        format: int32
+                        type: integer
+                      type:
+                        type: string
+                    required:
+                    - size
+                    type: object
                 type: object
               subnet:
                 type: string
@@ -75,29 +94,33 @@ spec:
                 additionalProperties:
                   type: string
                 type: object
+              userData:
+                type: string
             required:
             - amiId
-            - instanceName
             - instanceType
-            - sshKey
+            - region
             - storage
-            - subnet
             type: object
           status:
             description: status defines the observed state of EC2Instance
             properties:
               instanceID:
                 type: string
-              phase:
+              privateDNS:
+                type: string
+              privateIP:
+                type: string
+              publicDNS:
+                type: string
+              publicIP:
+                type: string
+              state:
                 description: |-
                   INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
                   Important: Run "make" to regenerate code after modifying this file
                 type: string
-              publicIP:
-                type: string
             type: object
-        required:
-        - spec
         type: object
     served: true
     storage: true
