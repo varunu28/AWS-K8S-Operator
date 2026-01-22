@@ -11,7 +11,7 @@ spec:
   keyPair: ${K8S_KEY_PAIR}
   securityGroups:
     - ${K8S_SECURITY_GROUP}
-  subnet: {SUBNET_ID}
+  subnet: ${SUBNET_ID}
   associatePublicIP: true
   storage:
     rootVolume:
