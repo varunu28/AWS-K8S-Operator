@@ -1,10 +1,17 @@
 # aws-operator
-// TODO(user): Add simple overview of use/purpose
+A K8S operator to abstract away AWS cloud resource management
 
 ## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+This K8S operator is for managing AWS resources through Kubernetes. Currently it supports creation & deletion of EC2 instances. 
 
 ## Getting Started
+
+### How to run locally?
+ - Create a **K3D** cluster by running `k3d cluster create --config cluster.yml`
+ - Run the reconciler by running `go run cmd/main.go`
+ - Create the `EC2Instance` resource by running `kubectl -f instance.yml create`. Make sure to substitute the correct values in the YAML file
+ - Reconicle loop will be triggered & an `EC2Instance` resource will be created on the cluster & corresponding AWS resource will be created
+ - Delete the `EC2Instance` resource by running `kubectl -f instance.yml delete` which will again trigger reconcile loop for deletion
 
 ### Prerequisites
 - go version v1.24.6+
