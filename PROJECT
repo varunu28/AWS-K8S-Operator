@@ -6,6 +6,8 @@ cliVersion: 4.10.1
 domain: cloud.com
 layout:
 - go.kubebuilder.io/v4
+plugins:
+  helm.kubebuilder.io/v1-alpha: {}
 projectName: aws-operator
 repo: github.com/varunu28/aws-operators
 resources:
